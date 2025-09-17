@@ -1,5 +1,8 @@
 #! /bin/bash
 
+"0" > captura_mjpeg.avi
+rm captura_mjpeg.avi
+
 # Capturamos un video YUYV RAW y lo convertimos a MJPEG AVI:
 ffmpeg -f v4l2 -input_format yuyv422 -framerate 30 -video_size 640x480 \
 -i /dev/video0 -c:v mjpeg -q:v 3 captura_mjpeg.avi
