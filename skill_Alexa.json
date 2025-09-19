@@ -1,0 +1,148 @@
+{
+    "interactionModel": {
+        "languageModel": {
+            "invocationName": "robot exapodo",
+            "intents": [
+                {
+                    "name": "ControlRobotIntent",
+                    "slots": [
+                        {
+                            "name": "direction",
+                            "type": "COMMAND_ROBOT"
+                        }
+                    ],
+                    "samples": [
+                        "camina hacia la {direction}",
+                        "camina hacia {direction}",
+                        "ve hacia la {direction}",
+                        "muevete hacia {direction}",
+                        "muevete hacia la {direction}",
+                        "ejecuta {direction}",
+                        "ve hacia {direction}",
+                        "{direction}"
+                    ]
+                },
+                {
+                    "name": "AMAZON.StopIntent",
+                    "samples": [
+                        "detente",
+                        "para el robot",
+                        "detener"
+                    ]
+                },
+                {
+                    "name": "AMAZON.HelpIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.CancelIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.NavigateHomeIntent",
+                    "samples": []
+                }
+            ],
+            "types": [
+                {
+                    "name": "COMMAND_ROBOT",
+                    "values": [
+                        {
+                            "id": "DETENER",
+                            "name": {
+                                "value": "detener",
+                                "synonyms": [
+                                    "detente"
+                                ]
+                            }
+                        },
+                        {
+                            "id": "DERECHA",
+                            "name": {
+                                "value": "derecha"
+                            }
+                        },
+                        {
+                            "id": "IZQUIERDA",
+                            "name": {
+                                "value": "izquierda"
+                            }
+                        },
+                        {
+                            "id": "ATRAS",
+                            "name": {
+                                "value": "atrás",
+                                "synonyms": [
+                                    "atras",
+                                    "retrocede"
+                                ]
+                            }
+                        },
+                        {
+                            "id": "ADELANTE",
+                            "name": {
+                                "value": "adelante",
+                                "synonyms": [
+                                    "avanza"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "RESSOURCE_ROBOT",
+                    "values": [
+                        {
+                            "id": "STREAM",
+                            "name": {
+                                "value": "video",
+                                "synonyms": [
+                                    "camara"
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        "dialog": {
+            "intents": [
+                {
+                    "name": "ControlRobotIntent",
+                    "confirmationRequired": false,
+                    "prompts": {},
+                    "slots": [
+                        {
+                            "name": "recurso",
+                            "type": "RESSOURCE_ROBOT",
+                            "confirmationRequired": false,
+                            "elicitationRequired": false,
+                            "prompts": {}
+                        },
+                        {
+                            "name": "direction",
+                            "type": "COMMAND_ROBOT",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.318217764165.1650815709283"
+                            }
+                        }
+                    ]
+                }
+            ],
+            "delegationStrategy": "ALWAYS"
+        },
+        "prompts": [
+            {
+                "id": "Elicit.Slot.318217764165.1650815709283",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Dame un movimiento valido"
+                    }
+                ]
+            }
+        ]
+    }
+}
