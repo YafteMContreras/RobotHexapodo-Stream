@@ -7,11 +7,20 @@
                     "name": "ControlRobotIntent",
                     "slots": [
                         {
+                            "name": "recurso",
+                            "type": "RESSOURCE_ROBOT"
+                        },
+                        {
                             "name": "direction",
                             "type": "COMMAND_ROBOT"
                         }
                     ],
                     "samples": [
+                        "transmite {recurso}",
+                        "muestra {recurso}",
+                        "{recurso}",
+                        "inicia {recurso}",
+                        "activa {recurso}",
                         "camina hacia la {direction}",
                         "camina hacia {direction}",
                         "ve hacia la {direction}",
