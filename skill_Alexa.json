@@ -4,11 +4,11 @@
             "invocationName": "robot exapodo",
             "intents": [
                 {
-                    "name": "ControlRobotIntent",
+                    "name": "MoveRobotIntent",
                     "slots": [
                         {
                             "name": "recurso",
-                            "type": "RESSOURCE_ROBOT"
+                            "type": "RESOURCE_ROBOT"
                         },
                         {
                             "name": "direction",
@@ -50,6 +50,22 @@
                 {
                     "name": "AMAZON.NavigateHomeIntent",
                     "samples": []
+                },
+                {
+                    "name": "ResourceRobotIntent",
+                    "slots": [
+                        {
+                            "name": "resource",
+                            "type": "RESOURCE_ROBOT"
+                        }
+                    ],
+                    "samples": [
+                        "transmite {resource}",
+                        "muestra {resource}",
+                        "activa {resource}",
+                        "inicia {resource}",
+                        "{resource}"
+                    ]
                 }
             ],
             "types": [
@@ -99,7 +115,7 @@
                     ]
                 },
                 {
-                    "name": "RESSOURCE_ROBOT",
+                    "name": "RESOURCE_ROBOT",
                     "values": [
                         {
                             "id": "STREAM",
@@ -113,45 +129,6 @@
                     ]
                 }
             ]
-        },
-        "dialog": {
-            "intents": [
-                {
-                    "name": "ControlRobotIntent",
-                    "confirmationRequired": false,
-                    "prompts": {},
-                    "slots": [
-                        {
-                            "name": "recurso",
-                            "type": "RESSOURCE_ROBOT",
-                            "confirmationRequired": false,
-                            "elicitationRequired": false,
-                            "prompts": {}
-                        },
-                        {
-                            "name": "direction",
-                            "type": "COMMAND_ROBOT",
-                            "confirmationRequired": false,
-                            "elicitationRequired": true,
-                            "prompts": {
-                                "elicitation": "Elicit.Slot.318217764165.1650815709283"
-                            }
-                        }
-                    ]
-                }
-            ],
-            "delegationStrategy": "ALWAYS"
-        },
-        "prompts": [
-            {
-                "id": "Elicit.Slot.318217764165.1650815709283",
-                "variations": [
-                    {
-                        "type": "PlainText",
-                        "value": "Dame un movimiento valido"
-                    }
-                ]
-            }
-        ]
+        }
     }
 }
