@@ -86,11 +86,68 @@ def lambda_handler(event, context):
                 'response': {
                     'outputSpeech': {
                         'type': 'PlainText',
+                        'text': f'{response_text}'
+                    },
+                    'shouldEndSession': False
+                }
+            }
+        elif intent_name == 'ResourceRobotIntent':
+            try:
+                command = event['request']['intent']['slots']['resource']['resolutions']['resolutionsPerAuthority'][0]['values'][0]['value']['id']
+            except (KeyError, AttributeError) as e:
+                print(f"Error getting command: {str(e)}")
+                return {
+                    'version': '1.0',
+                    'response': {
+                        'outputSpeech': {
+                            'type': 'PlainText',
+                            'text': 'No se ha podido determinar la dirección del movimiento'
+                        }
+                    }
+                }
+
+            # Diccionario de comandos
+            command_mapping = {
+                'adelante': 'A',
+                'atras': 'R',
+                'izquierda': 'I',
+                'derecha': 'D',
+                'detener': 'P'
+            }
+
+            # Diccionario de respuestas
+            response_command_mapping = {
+                'adelante': 'Avanzando',
+                'atras': 'Retrocediendo',
+                'izquierda': 'Caminando hacia la izquierda',
+                'derecha': 'Caminando hacia la derecha',
+                'detener': 'Deteniendo'
+            }
+
+            # Normalizar el comando y obtener el código MQTT
+            # normalized_command = command.lower().strip()
+            # response_text = response_command_mapping.get(normalized_command, "Comando no reconocido")
+            # mqtt_command = command_mapping.get(normalized_command, "P") # Usamos P como opción predeterminada por protección
+
+            # Envío de mensaje
+            # response = iot_client.publish(
+            #     topic='robot/control',
+            #     qos=1,
+            #     payload=mqtt_command
+            # )
+
+            return {
+                'version': '1.0',
+                'response': {
+                    'outputSpeech': {
+                        'type': 'PlainText',
                         'text': f'{command}'
                     },
                     'shouldEndSession': False
                 }
             }
+
+
 
         elif intent_name in ["AMAZON.StopIntent", "AMAZON.CancelIntent"]:
             # Publicar comando de parada antes de cerrar
