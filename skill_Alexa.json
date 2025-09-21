@@ -12,15 +12,10 @@
                         },
                         {
                             "name": "direction",
-                            "type": "COMMAND_ROBOT"
+                            "type": "DIRECTION_ROBOT"
                         }
                     ],
                     "samples": [
-                        "transmite {recurso}",
-                        "muestra {recurso}",
-                        "{recurso}",
-                        "inicia {recurso}",
-                        "activa {recurso}",
                         "camina hacia la {direction}",
                         "camina hacia {direction}",
                         "ve hacia la {direction}",
@@ -70,17 +65,8 @@
             ],
             "types": [
                 {
-                    "name": "COMMAND_ROBOT",
+                    "name": "DIRECTION_ROBOT",
                     "values": [
-                        {
-                            "id": "DETENER",
-                            "name": {
-                                "value": "detener",
-                                "synonyms": [
-                                    "detente"
-                                ]
-                            }
-                        },
                         {
                             "id": "DERECHA",
                             "name": {
@@ -98,18 +84,14 @@
                             "name": {
                                 "value": "atrás",
                                 "synonyms": [
-                                    "atras",
-                                    "retrocede"
+                                    "atras"
                                 ]
                             }
                         },
                         {
                             "id": "ADELANTE",
                             "name": {
-                                "value": "adelante",
-                                "synonyms": [
-                                    "avanza"
-                                ]
+                                "value": "adelante"
                             }
                         }
                     ]
@@ -124,6 +106,33 @@
                                 "synonyms": [
                                     "camara"
                                 ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "INSTRUCTION_ROBOT",
+                    "values": [
+                        {
+                            "id": "DETENER",
+                            "name": {
+                                "value": "detente",
+                                "synonyms": [
+                                    "parar",
+                                    "para"
+                                ]
+                            }
+                        },
+                        {
+                            "id": "ATRAS",
+                            "name": {
+                                "value": "retrocede"
+                            }
+                        },
+                        {
+                            "id": "ADELANTE",
+                            "name": {
+                                "value": "avanza"
                             }
                         }
                     ]
