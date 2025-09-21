@@ -7,15 +7,16 @@
                     "name": "MoveRobotIntent",
                     "slots": [
                         {
-                            "name": "recurso",
-                            "type": "RESOURCE_ROBOT"
-                        },
-                        {
                             "name": "direction",
                             "type": "DIRECTION_ROBOT"
+                        },
+                        {
+                            "name": "instruction",
+                            "type": "INSTRUCTION_ROBOT"
                         }
                     ],
                     "samples": [
+                        "{instruction}",
                         "camina hacia la {direction}",
                         "camina hacia {direction}",
                         "ve hacia la {direction}",
@@ -126,18 +127,64 @@
                         {
                             "id": "ATRAS",
                             "name": {
-                                "value": "retrocede"
+                                "value": "retrocede",
+                                "synonyms": [
+                                    "retroceder"
+                                ]
                             }
                         },
                         {
                             "id": "ADELANTE",
                             "name": {
-                                "value": "avanza"
+                                "value": "avanza",
+                                "synonyms": [
+                                    "avanzar"
+                                ]
                             }
                         }
                     ]
                 }
             ]
-        }
+        },
+        "dialog": {
+            "intents": [
+                {
+                    "name": "MoveRobotIntent",
+                    "delegationStrategy": "ALWAYS",
+                    "confirmationRequired": true,
+                    "prompts": {
+                        "confirmation": "Confirm.Intent.638589134788"
+                    },
+                    "slots": [
+                        {
+                            "name": "direction",
+                            "type": "DIRECTION_ROBOT",
+                            "confirmationRequired": false,
+                            "elicitationRequired": false,
+                            "prompts": {}
+                        },
+                        {
+                            "name": "instruction",
+                            "type": "INSTRUCTION_ROBOT",
+                            "confirmationRequired": false,
+                            "elicitationRequired": false,
+                            "prompts": {}
+                        }
+                    ]
+                }
+            ],
+            "delegationStrategy": "ALWAYS"
+        },
+        "prompts": [
+            {
+                "id": "Confirm.Intent.638589134788",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "¿Hacia que dirección quieres mover el robot?"
+                    }
+                ]
+            }
+        ]
     }
 }
