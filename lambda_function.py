@@ -33,8 +33,12 @@ def lambda_handler(event, context):
         intent_name = event['request']['intent']['name']
 
         if intent_name == 'MoveRobotIntent':
+            command = event['request']['intent']['slots']['direction'].get('resolutions',{})
             try:
-                command = event['request']['intent']['slots']['direction']['resolutions']['resolutionsPerAuthority'][0]['values'][0]['value']['id']
+                if command == {}:
+                    command = event['request']['intent']['slots']['instruction']['resolutions']['resolutionsPerAuthority'][0]['values'][0]['value']['id']
+                else:
+                    command = event['request']['intent']['slots']['direction']['resolutions']['resolutionsPerAuthority'][0]['values'][0]['value']['id']
             except (KeyError, AttributeError) as e:
                 print(f"Error getting command: {str(e)}")
                 return {
@@ -42,7 +46,7 @@ def lambda_handler(event, context):
                     'response': {
                         'outputSpeech': {
                             'type': 'PlainText',
-                            'text': 'No se ha podido determinar la direccion del movimiento'
+                            'text': 'No se ha podido determinar la dirección del movimiento'
                         }
                     }
                 }
@@ -82,7 +86,7 @@ def lambda_handler(event, context):
                 'response': {
                     'outputSpeech': {
                         'type': 'PlainText',
-                        'text': f'{response_text}'
+                        'text': f'{command}'
                     },
                     'shouldEndSession': False
                 }
