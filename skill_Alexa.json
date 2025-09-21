@@ -105,6 +105,8 @@
                             "name": {
                                 "value": "video",
                                 "synonyms": [
+                                    "vídeo",
+                                    "cámara",
                                     "camara"
                                 ]
                             }
@@ -171,6 +173,23 @@
                             "prompts": {}
                         }
                     ]
+                },
+                {
+                    "name": "ResourceRobotIntent",
+                    "delegationStrategy": "ALWAYS",
+                    "confirmationRequired": true,
+                    "prompts": {
+                        "confirmation": "Confirm.Intent.1663524074525"
+                    },
+                    "slots": [
+                        {
+                            "name": "resource",
+                            "type": "RESOURCE_ROBOT",
+                            "confirmationRequired": false,
+                            "elicitationRequired": false,
+                            "prompts": {}
+                        }
+                    ]
                 }
             ],
             "delegationStrategy": "ALWAYS"
@@ -182,6 +201,15 @@
                     {
                         "type": "PlainText",
                         "value": "¿Hacia que dirección quieres mover el robot?"
+                    }
+                ]
+            },
+            {
+                "id": "Confirm.Intent.1663524074525",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "¿Qué recurso deseas activar?"
                     }
                 ]
             }
