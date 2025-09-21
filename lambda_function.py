@@ -34,7 +34,7 @@ def lambda_handler(event, context):
 
         if intent_name == 'MoveRobotIntent':
             try:
-                command = event['request']['intent']['slots']['direction']['value']
+                command = event['request']['intent']['slots']['direction']['resolutions']['resolutionsPerAuthority'][0]['values'][0]['value']['id']
             except (KeyError, AttributeError) as e:
                 print(f"Error getting command: {str(e)}")
                 return {
@@ -50,31 +50,24 @@ def lambda_handler(event, context):
             # Diccionario de comandos
             command_mapping = {
                 'adelante': 'A',
-                'atrás': 'R',
-                'avanza': 'A',
-                'retrocede': 'R',
+                'atras': 'R',
                 'izquierda': 'I',
                 'derecha': 'D',
-                'detener': 'P',
-                'camara': 'C',
-                'video': 'C'
+                'detener': 'P'
             }
 
             # Diccionario de respuestas
-            command_mapping_response = {
-                'adelante': 'A',
-                'atrás': 'R',
-                'avanza': 'A',
-                'retrocede': 'R',
-                'izquierda': 'I',
-                'derecha': 'D',
-                'detener': 'P',
-                'camara': 'C',
-                'video': 'C'
+            response_command_mapping = {
+                'adelante': 'Avanzando',
+                'atras': 'Retrocediendo',
+                'izquierda': 'Caminando hacia la izquierda',
+                'derecha': 'Caminando hacia la derecha',
+                'detener': 'Deteniendo'
             }
 
             # Normalizar el comando y obtener el código MQTT
             normalized_command = command.lower().strip()
+            response_text = response_command_mapping.get(normalized_command, "Comando no reconocido")
             mqtt_command = command_mapping.get(normalized_command, "P") # Usamos P como opción predeterminada por protección
 
             # Envío de mensaje
@@ -89,7 +82,7 @@ def lambda_handler(event, context):
                 'response': {
                     'outputSpeech': {
                         'type': 'PlainText',
-                        'text': f'Ejecutando comando {command}'
+                        'text': f'{response_text}'
                     },
                     'shouldEndSession': False
                 }
