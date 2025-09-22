@@ -1,9 +1,8 @@
 #! /bin/bash
 
-"0" > captura_mjpeg.avi
-rm captura_mjpeg.avi
+rm -f captura_mjpeg.avi
 
-./server.sh &
+#./server.sh &
 
 # Capturamos un video YUYV RAW y lo convertimos a MJPEG AVI:
 ffmpeg -f v4l2 -input_format yuyv422 -framerate 30 -video_size 640x480 \
@@ -20,7 +19,7 @@ ffmpeg -f v4l2 -input_format yuyv422 -framerate 30 -video_size 640x480 \
 
 # Convertimos el MJPEG a H.264 y lo enviamos por HLS
 ffmpeg -i captura_mjpeg.avi -c:v libx264 -preset ultrafast -tune zerolatency \
--f hls -hls_time 4 -hls_list_size 5 -hls_flags delete_segments \
+-f hls -hls_time 1 -hls_list_size 5 -hls_flags delete_segments+append_list \
 ./ruta/stream.m3u8
 # -i captura_mjpeg.avi: El -i indica el archivo o dispositivo de entrada que FFmpeg debe leer, siempre va seguido del nombre o ruta del archivo o dispositivo
 # -c:v libx264: Codifica el video usando el codec H.264
