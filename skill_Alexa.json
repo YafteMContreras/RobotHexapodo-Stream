@@ -56,6 +56,11 @@
                         }
                     ],
                     "samples": [
+                        "transmite el {resource}",
+                        "activa el {resource}",
+                        "activa la {resource}",
+                        "muestra la {resource}",
+                        "muestra el {resource}",
                         "transmite {resource}",
                         "muestra {resource}",
                         "activa {resource}",
@@ -177,10 +182,8 @@
                 {
                     "name": "ResourceRobotIntent",
                     "delegationStrategy": "ALWAYS",
-                    "confirmationRequired": true,
-                    "prompts": {
-                        "confirmation": "Confirm.Intent.1663524074525"
-                    },
+                    "confirmationRequired": false,
+                    "prompts": {},
                     "slots": [
                         {
                             "name": "resource",
