@@ -92,61 +92,47 @@ def lambda_handler(event, context):
                 }
             }
         elif intent_name == 'ResourceRobotIntent':
-            try:
-                command = event['request']['intent']['slots']['resource']['resolutions']['resolutionsPerAuthority'][0]['values'][0]['value']['id']
-            except (KeyError, AttributeError) as e:
-                print(f"Error getting command: {str(e)}")
+            # Verificar si el dispositivo tiene capacidad de video
+            supported_interfaces = event.get('context', {}).get('System', {}).get('device', {}).get('supportedInterfaces', {})
+
+            if 'VideoApp' in supported_interfaces:
+                # Dispositivo con pantalla - mostrar video
+                
+                return {
+                    'version': '1.0',
+                    "sessionAttributes": {},  # aunque esté vacío
+                    'response': {
+                        'outputSpeech': {
+                            'type': 'PlainText',
+                            'text': 'Mostrando video'
+                        },
+                        "directives": [
+                            {
+                                "type": "VideoApp.Launch",
+                                "videoItem": {
+                                    "source": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                                    "metadata": {
+                                        "title": "Video de prueba",
+                                        "subtitle": "Big Buck Bunny"
+                                    }
+                                }
+                            }
+                        ],
+                        'shouldEndSession': True
+                    }
+                }
+            else:
+                # Dispositivo sin pantalla - mostrar mensaje de error
                 return {
                     'version': '1.0',
                     'response': {
                         'outputSpeech': {
                             'type': 'PlainText',
-                            'text': 'No se ha podido determinar la dirección del movimiento'
-                        }
+                            'text': 'Lo siento, este dispositivo no tiene pantalla para mostrar el video'
+                        },
+                        'shouldEndSession': False
                     }
                 }
-
-            # Diccionario de comandos
-            command_mapping = {
-                'adelante': 'A',
-                'atras': 'R',
-                'izquierda': 'I',
-                'derecha': 'D',
-                'detener': 'P'
-            }
-
-            # Diccionario de respuestas
-            response_command_mapping = {
-                'adelante': 'Avanzando',
-                'atras': 'Retrocediendo',
-                'izquierda': 'Caminando hacia la izquierda',
-                'derecha': 'Caminando hacia la derecha',
-                'detener': 'Deteniendo'
-            }
-
-            # Normalizar el comando y obtener el código MQTT
-            # normalized_command = command.lower().strip()
-            # response_text = response_command_mapping.get(normalized_command, "Comando no reconocido")
-            # mqtt_command = command_mapping.get(normalized_command, "P") # Usamos P como opción predeterminada por protección
-
-            # Envío de mensaje
-            # response = iot_client.publish(
-            #     topic='robot/control',
-            #     qos=1,
-            #     payload=mqtt_command
-            # )
-
-            return {
-                'version': '1.0',
-                'response': {
-                    'outputSpeech': {
-                        'type': 'PlainText',
-                        'text': f'{command}'
-                    },
-                    'shouldEndSession': False
-                }
-            }
-
 
 
         elif intent_name in ["AMAZON.StopIntent", "AMAZON.CancelIntent"]:
@@ -180,7 +166,31 @@ def lambda_handler(event, context):
                 }
                 
             }
+
+        elif intent_name == "AMAZON.ResumeIntent":
+            return{
+                'version': '1.0',
+                'response': {
+                    'outputSpeech': {
+                        'type': 'PlainText',
+                        'text': 'Resume Intent aún no está funcionando'
+                    },
+                    'shouldEndSession': False
+                }
+            }
         
+        elif intent_name == "AMAZON.PauseIntent":
+            return{
+                'version': '1.0',
+                'response': {
+                    'outputSpeech': {
+                        'type': 'PlainText',
+                        'text': 'Pause Intent aún no está funcionando'
+                    },
+                    'shouldEndSession': False
+                }
+            }
+
         else:
             return {
                 'version': '1.0',
