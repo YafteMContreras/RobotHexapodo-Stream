@@ -97,30 +97,39 @@ def lambda_handler(event, context):
 
             if 'VideoApp' in supported_interfaces:
                 # Dispositivo con pantalla - mostrar video
-                
-                return {
-                    'version': '1.0',
-                    "sessionAttributes": {},  # aunque esté vacío
-                    'response': {
-                        'outputSpeech': {
-                            'type': 'PlainText',
-                            'text': 'Mostrando video'
-                        },
-                        "directives": [
-                            {
-                                "type": "VideoApp.Launch",
-                                "videoItem": {
-                                    "source": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-                                    "metadata": {
-                                        "title": "Video de prueba",
-                                        "subtitle": "Big Buck Bunny"
+                try:
+                    return {
+                        'version': '1.0',
+                        "sessionAttributes": {},  # aunque esté vacío
+                        'response': {
+                            'outputSpeech': {
+                                'type': 'PlainText',
+                                'text': 'Mostrando video'
+                            },
+                            "directives": [
+                                {
+                                    "type": "VideoApp.Launch",
+                                    "videoItem": {
+                                        "source": "https://drive.google.com/file/d/1il1yUQ7mxAhn0N7czTLox5yeymp0TV1I/view?usp=sharing"
                                     }
                                 }
-                            }
-                        ],
-                        'shouldEndSession': True
+                            ],
+                            'shouldEndSession': True
+                        }
                     }
-                }
+                
+                except Exception as e:
+                    print(f"Error getting command: {str(e)}")
+                    return {
+                        'version': '1.0',
+                        'response': {
+                            'outputSpeech': {
+                                'type': 'PlainText',
+                                'text': 'Se ha producido un error al mostrar el video'
+                            }
+                        }
+                    }
+
             else:
                 # Dispositivo sin pantalla - mostrar mensaje de error
                 return {
