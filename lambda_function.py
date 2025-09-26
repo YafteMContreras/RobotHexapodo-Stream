@@ -6,29 +6,20 @@ iot_client = boto3.client('iot-data')
 
 # Estructura principal de la función lambda
 def lambda_handler(event, context):
+    print("Evento recibido:", json.dumps(event, indent=2))
+
+    # Session attributes base
+    session_attributes = event.get('session', {}).get('attributes', {})
+
     request_type = event['request']['type']
 
     if request_type == 'LaunchRequest':
-        return {
-            'version': '1.0',
-            'response': {
-                'outputSpeech': {
-                    'type': 'PlainText',
-                    'text': 'Robot iniciado'
-                },
-                'shouldEndSession': False
-            }
-        }
+        return build_response ("Robot iniciado", session_attributes, False)
 
     elif request_type == 'SessionEndedRequest':
         print(f"Sesión terminada por razón: {event['request']['reason']}")
-        return {
-            'version': '1.0',
-            'response': {
-                'shouldEndSession': True
-            }
-        }
-
+        return build_response("", session_attributes, True)
+        
     elif request_type == 'IntentRequest':
         intent_name = event['request']['intent']['name']
 
@@ -110,7 +101,7 @@ def lambda_handler(event, context):
                                 {
                                     "type": "VideoApp.Launch",
                                     "videoItem": {
-                                        "source": "https://drive.google.com/file/d/1il1yUQ7mxAhn0N7czTLox5yeymp0TV1I/view?usp=sharing"
+                                        "source": "https://d2zihajmogu5jn.cloudfront.net/bipbop-advanced/bipbop_16x9_variant.m3u8"
                                     }
                                 }
                             ],
@@ -235,3 +226,24 @@ def lambda_handler(event, context):
                 'shouldEndSession': False
             }
         }
+
+def build_response(speech_text, session_attributes, should_end_session):
+    """Construye una respuesta básica sin video"""
+    response = {
+        'version': '1.0',
+        'sessionAttributes': session_attributes,
+        'response': {
+            'outputSpeech': {
+                'type': 'PlainText',
+                'text': speech_text
+            },
+            'shouldEndSession': should_end_session
+        }
+    }
+
+    # Solo incluir directives si estamos en una respuesta de video
+    if "video" in speech_text.lower() and "reproduciendo" in speech_text.lower():
+        # Esto lo manejamos en handle_video_intent
+        pass
+        
+    return response
