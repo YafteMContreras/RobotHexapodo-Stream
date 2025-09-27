@@ -1,12 +1,17 @@
 #! /bin/bash
 
 # Limpiamos la carpeta ruta
-rm -f ruta/*
+OUTPUT_DIR="alexa_dash"
+rm -rf "$OUTPUT_DIR"
+mkdir -p "$OUTPUT_DIR"
+cd "$OUTPUT_DIR"
 
 # Capturamos directamente desde la cámara y generamos HLS en un solo paso
-ffmpeg -f v4l2 -input_format yuyv422 -framerate 30 -video_size 640x480 \
+ffmpeg -f v4l2 -input_format yuyv422 -framerate 25 -video_size 960x540 \
 	-i /dev/video0 -f lavfi -i anullsrc=channel_layout=stereo:sample_rate=44100 \
 	 -c:v libx264 -preset ultrafast -tune zerolatency \
-	-f hls -hls_time 1 -hls_list_size 5 -hls_flags delete_segments+append_list \
-	-hls_segment_filename "./ruta/segment%03d.ts" ./ruta/stream.m3u8
+	-profile:v baseline -level 3.1 -pix_fmt yuv420p -c:a aac -b:a 64k \
+	-f dash -window_size 5 -extra_window_size 3 -seg_duration 4 -remove_at_exit 1 \
+	stream.mpd 2> ffmpeg.log &
 
+python3 -m http.server 8080
