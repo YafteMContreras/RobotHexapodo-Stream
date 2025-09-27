@@ -22,6 +22,7 @@ def lambda_handler(event, context):
         
     elif request_type == 'IntentRequest':
         intent_name = event['request']['intent']['name']
+        print(f"Intent: {intent_name}")
 
         if intent_name == 'MoveRobotIntent':
             command = event['request']['intent']['slots']['direction'].get('resolutions',{})
@@ -32,15 +33,7 @@ def lambda_handler(event, context):
                     command = event['request']['intent']['slots']['direction']['resolutions']['resolutionsPerAuthority'][0]['values'][0]['value']['id']
             except (KeyError, AttributeError) as e:
                 print(f"Error getting command: {str(e)}")
-                return {
-                    'version': '1.0',
-                    'response': {
-                        'outputSpeech': {
-                            'type': 'PlainText',
-                            'text': 'No se ha podido determinar la dirección del movimiento'
-                        }
-                    }
-                }
+                return build_response("No se ha podido determinar la dirección del movimiento", session_attributes, False)
 
             # Diccionario de comandos
             command_mapping = {
@@ -72,68 +65,10 @@ def lambda_handler(event, context):
                 payload=mqtt_command
             )
 
-            return {
-                'version': '1.0',
-                'response': {
-                    'outputSpeech': {
-                        'type': 'PlainText',
-                        'text': f'{response_text}'
-                    },
-                    'shouldEndSession': False
-                }
-            }
+            return build_response(response_text, session_attributes, False)
+           
         elif intent_name == 'ResourceRobotIntent':
-            # Verificar si el dispositivo tiene capacidad de video
-            supported_interfaces = event.get('context', {}).get('System', {}).get('device', {}).get('supportedInterfaces', {})
-
-            if 'VideoApp' in supported_interfaces:
-                # Dispositivo con pantalla - mostrar video
-                try:
-                    return {
-                        'version': '1.0',
-                        "sessionAttributes": {},  # aunque esté vacío
-                        'response': {
-                            'outputSpeech': {
-                                'type': 'PlainText',
-                                'text': 'Mostrando video'
-                            },
-                            "directives": [
-                                {
-                                    "type": "VideoApp.Launch",
-                                    "videoItem": {
-                                        "source": "https://d2zihajmogu5jn.cloudfront.net/bipbop-advanced/bipbop_16x9_variant.m3u8"
-                                    }
-                                }
-                            ],
-                            'shouldEndSession': True
-                        }
-                    }
-                
-                except Exception as e:
-                    print(f"Error getting command: {str(e)}")
-                    return {
-                        'version': '1.0',
-                        'response': {
-                            'outputSpeech': {
-                                'type': 'PlainText',
-                                'text': 'Se ha producido un error al mostrar el video'
-                            }
-                        }
-                    }
-
-            else:
-                # Dispositivo sin pantalla - mostrar mensaje de error
-                return {
-                    'version': '1.0',
-                    'response': {
-                        'outputSpeech': {
-                            'type': 'PlainText',
-                            'text': 'Lo siento, este dispositivo no tiene pantalla para mostrar el video'
-                        },
-                        'shouldEndSession': False
-                    }
-                }
-
+            return handle_video_intent(event, session_attributes)
 
         elif intent_name in ["AMAZON.StopIntent", "AMAZON.CancelIntent"]:
             # Publicar comando de parada antes de cerrar
@@ -142,78 +77,22 @@ def lambda_handler(event, context):
                 qos=1,
                 payload="P"
             )
-
-            return {
-                'version': '1.0',
-                'response': {
-                    'outputSpeech': {
-                        'type': 'PlainText',
-                        'text': 'Deteniendo el robot, ¡Hasta luego!'
-                    },
-                    'shouldEndSession': True
-                }
-            }
-
+            return build_response("Deteniendo el robot, ¡Hasta luego!", session_attributes, True)
+            
         elif intent_name == 'AMAZON.HelpIntent':
-            return{
-                'version': '1.0',
-                'response': {
-                    'outputSpeech': {
-                        'type': 'PlainText',
-                        'text': 'Puedes decirme que quieres que haga el robot, por ejemplo, adelante, atras, izquierda, derecha o detener'
-                    },
-                    'shouldEndSession': False
-                }
-                
-            }
+            return build_response("Puedes decirme que quieres que haga el robot, por ejemplo, adelante, atras, izquierda, derecha o detener", session_attributes, False)
 
         elif intent_name == "AMAZON.ResumeIntent":
-            return{
-                'version': '1.0',
-                'response': {
-                    'outputSpeech': {
-                        'type': 'PlainText',
-                        'text': 'Resume Intent aún no está funcionando'
-                    },
-                    'shouldEndSession': False
-                }
-            }
+            return build_response("Resume Intent aún no está funcionando", session_attributes, False)
         
         elif intent_name == "AMAZON.PauseIntent":
-            return{
-                'version': '1.0',
-                'response': {
-                    'outputSpeech': {
-                        'type': 'PlainText',
-                        'text': 'Pause Intent aún no está funcionando'
-                    },
-                    'shouldEndSession': False
-                }
-            }
+            return build_response("Pause Intent aún no está funcionando", session_attributes, False)
 
         else:
-            return {
-                'version': '1.0',
-                'response': {
-                    'outputSpeech': {
-                        'type': 'PlainText',
-                        'text': 'Lo siento, no entiendo lo que me has dicho'
-                    },
-                    'shouldEndSession': False
-                }
-            }
+            return build_response("Intent no reconocido", session_attributes, False)
     
     # Respuesta por defecto para intents no reconocidos
-    return {
-        'version': '1.0',
-        'response': {
-            'outputSpeech': {
-                'type': 'PlainText',
-                'text': 'No entendí el comando. ¿Puedes repetirlo?'
-            },
-            'shouldEndSession': False
-        }
-    }
+    return build_response('No entendí el comando. ¿Puedes repetirlo?', session_attributes, False)
             
     def error_response(message):
         return {
@@ -228,7 +107,7 @@ def lambda_handler(event, context):
         }
 
 def build_response(speech_text, session_attributes, should_end_session):
-    """Construye una respuesta básica sin video"""
+    # Construye una respuesta básica sin video
     response = {
         'version': '1.0',
         'sessionAttributes': session_attributes,
@@ -247,3 +126,52 @@ def build_response(speech_text, session_attributes, should_end_session):
         pass
         
     return response
+
+def handle_video_intent(event, session_attributes):   
+    # Maneja específicamente el intent de video
+    try:
+        # Verificar capacidades del dispositivo
+        supported_interfaces = event.get('context', {}).get('System', {}).get('device', {}).get('supportedInterfaces', {})
+        print("Interfaces soportadas:", json.dumps(supported_interfaces, indent=2))
+        
+        if 'VideoApp' not in supported_interfaces:
+            print("El dispositivo no soporta video")
+            return build_response("Este dispositivo no soporta video", session_attributes, False)
+        
+        # URL de video que SÍ funciona con Alexa
+        video_url = "https://d2zihajmogu5jn.cloudfront.net/bipbop-advanced/bipbop_16x9_variant.m3u8"
+        
+        # Alternativas de prueba:
+        # video_url = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+        # video_url = "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"
+        
+        # Construir respuesta con video
+        response = {
+            'version': '1.0',
+            'sessionAttributes': session_attributes,
+            'response': {
+                'outputSpeech': {
+                    'type': 'PlainText',
+                    'text': 'Reproduciendo video del robot'
+                },
+                'directives': [
+                    {
+                        'type': 'VideoApp.Launch',
+                        'videoItem': {
+                            'source': video_url,
+                            'metadata': {
+                                'title': 'Cámara Robot',
+                                'subtitle': 'Transmisión en vivo'
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+        
+        print("Respuesta con video:", json.dumps(response, indent=2))
+        return response
+        
+    except Exception as e:
+        print(f"Error en handle_video_intent: {str(e)}")
+        return build_response(f"Error al reproducir video: {str(e)}", session_attributes, False)
