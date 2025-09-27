@@ -94,18 +94,6 @@ def lambda_handler(event, context):
     # Respuesta por defecto para intents no reconocidos
     return build_response('No entendí el comando. ¿Puedes repetirlo?', session_attributes, False)
             
-    def error_response(message):
-        return {
-            'version': '1.0',
-            'response': {
-                'outputSpeech': {
-                    'type': 'PlainText',
-                    'text': f'{message} no es valido, intentelo de nuevo'
-                },
-                'shouldEndSession': False
-            }
-        }
-
 def build_response(speech_text, session_attributes, should_end_session):
     # Construye una respuesta básica sin video
     response = {
@@ -139,7 +127,10 @@ def handle_video_intent(event, session_attributes):
             return build_response("Este dispositivo no soporta video", session_attributes, False)
         
         # URL de video que SÍ funciona con Alexa
-        video_url = "https://d2zihajmogu5jn.cloudfront.net/bipbop-advanced/bipbop_16x9_variant.m3u8"
+        # video_url = "https://d2zihajmogu5jn.cloudfront.net/bipbop-advanced/bipbop_16x9_variant.m3u8"
+
+        # video_url = "https://53d23d989785.ngrok-free.app/stream.m3u8"
+        video_url = "https://53d23d989785.ngrok-free.app/mov_bbb.mp4"
         
         # Alternativas de prueba:
         # video_url = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
